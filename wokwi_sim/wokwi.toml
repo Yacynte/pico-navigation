@@ -1,0 +1,16 @@
+[wokwi]
+version = 1
+firmware = "../build/agrobot.uf2"
+elf = "../build/agrobot.elf"
+rfc2217ServerPort = 4000
+
+
+[[components.uart]]
+baud = 115200
+
+
+[[uart]]
+id = "uart0"
+baudRate = 115200
+rxPin = 1
+txPin = 0
