@@ -1,0 +1,5 @@
+# Ignore build directories
+build/
+build_pico/
+pico-sdk-blink/
+CMakeLists_pico.txt
