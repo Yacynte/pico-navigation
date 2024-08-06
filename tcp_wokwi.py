@@ -1,4 +1,5 @@
 import socket
+import time
 
 def start_client(host='127.0.0.1', port=4000):
     # Create a TCP/IP socket
@@ -21,6 +22,7 @@ def start_client(host='127.0.0.1', port=4000):
                 # Receive response
                 data = client_socket.recv(1024)
                 print(f"Received: {data.decode('utf-8')}")
+                
         
         finally:
             # Clean up the connection

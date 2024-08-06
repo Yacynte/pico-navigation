@@ -155,7 +155,7 @@ void receive_input(char motion_info_[MAX_LINE_LENGTH], int index){
             if (input == '\n') {
                 // Null-terminate the received string
                 motion_info_[MAX_LINE_LENGTH-1] = '\0';
-                printf("Received: %s\n", motion_info_); // Print the received line
+                printf("Received message: %s\n", motion_info_); // Print the received line
                 index = 0; // Reset the index for the next line
                 break;
             } else {
@@ -176,7 +176,7 @@ void receive_input(char motion_info_[MAX_LINE_LENGTH], int index){
     }
      // Ensure the char array is null-terminated
     // printf("no character\n");
-    printf ("no character: %s \n", motion_info_[0]);
+    //printf ("no character: %s \n", motion_info_[0]);
     //motion_info_[MAX_LINE_LENGTH-1] = '\0';
 }
 
@@ -212,12 +212,13 @@ std::string receive_uart_message(){
 
 std::vector<std::string> split_received_data( std::string motion_info){
     //char motion_info_[MAX_LINE_LENGTH]
-    printf ("our data 1: %s \n", motion_info[1]);
+    printf ("our data 1: %s \n", motion_info.c_str());
+    std::string motion_ = "forward 3.14 2.17";
     // Convert char array to std::string
     //std::string s(motion_info_);
     // printf("Type of motion_info_, %s\n",typeid(motion_info_).name());
     // printf("Type of motion_info_, %s\n",typeid(s).name());
-    std::istringstream stream(motion_info);
+    std::stringstream stream(motion_info);
     //printf ("our data 2: %s \n", s);
     std::vector<std::string> words;
     std::string word;
@@ -229,8 +230,8 @@ std::vector<std::string> split_received_data( std::string motion_info){
     printf ("our data splitted: %s \n", words[0]);
     // Print the results
     for (const auto& w : words) {
-        //std::cout << word << std::endl;
-        printf ("our data splitted: %s \n", word);
+        // std::cout << word << std::endl;
+        printf ("our data splitted: %s \n", w.c_str());
     }
     return words;
 }
