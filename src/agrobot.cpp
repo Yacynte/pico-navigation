@@ -64,11 +64,12 @@ int main()
         gpio_put(LED_PIN, 1);
         std::vector<std::string> splitted_data = split_received_data(motion_info);
         std::string direction = splitted_data[0];
-        printf ("direction, %s \n", direction);
-        float speed = std::stof(splitted_data[1]);
-        printf ("speed, %s \n", splitted_data[1].c_str());
+    
+        printf ("direction: %s \n", direction.c_str());
+        float speed = std::stof(splitted_data[1].c_str());
+        printf ("speed: %s \n", splitted_data[1].c_str());
         float angular_speed = std::stof(splitted_data[2].c_str());
-        printf ("angular_speed, %s \n", splitted_data[2].c_str());
+        printf ("angular_speed: %s \n", splitted_data[2].c_str());
         if((previous_speed - speed ) > 0.02){ 
             // Apply brakes
             brake_robot(direction, previous_speed-speed, previous_angular_speed-angular_speed);

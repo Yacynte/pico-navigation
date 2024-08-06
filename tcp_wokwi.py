@@ -14,14 +14,14 @@ def start_client(host='127.0.0.1', port=4000):
                 float0 = "forward"
                 float1 = 3.14
                 float2 = 2.71
-                float3 = "\n"
+                float3 = '\n'
                 message = f"{float0} {float1} {float2} {float3}"
                 client_socket.sendall(message.encode('utf-8'))
                 print(f"Sent: {message}")
                 
                 # Receive response
                 data = client_socket.recv(1024)
-                print(f"Received: {data.decode('utf-8')}")
+                # print(f"Received: {data.decode('utf-8')}")
                 
         
         finally:

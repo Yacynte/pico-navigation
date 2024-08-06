@@ -161,7 +161,7 @@ void receive_input(char motion_info_[MAX_LINE_LENGTH], int index){
             } else {
                 if (index < MAX_LINE_LENGTH - 1) {
                     motion_info_[index++] = input; // Store the character in the buffer
-                    printf ("no xter: %s \n", input);
+                    // printf ("no xter: %s \n", input);
                     // printf("Entering xter\n");
                 } else {
                     // Buffer overflow, reset the index
@@ -176,7 +176,7 @@ void receive_input(char motion_info_[MAX_LINE_LENGTH], int index){
     }
      // Ensure the char array is null-terminated
     // printf("no character\n");
-    //printf ("no character: %s \n", motion_info_[0]);
+    // printf ("no character: %s \n", motion_info_);
     //motion_info_[MAX_LINE_LENGTH-1] = '\0';
 }
 
@@ -227,11 +227,13 @@ std::vector<std::string> split_received_data( std::string motion_info){
     while (stream >> word) {
         words.push_back(word);
     }
+    /*
     printf ("our data splitted: %s \n", words[0]);
     // Print the results
     for (const auto& w : words) {
         // std::cout << word << std::endl;
         printf ("our data splitted: %s \n", w.c_str());
     }
+    */
     return words;
 }
