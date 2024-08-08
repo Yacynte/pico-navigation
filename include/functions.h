@@ -53,10 +53,10 @@ void init_motor_pins();
 void initialize_uart();
 
 //move Robot
-void move_robot( std::string direction, uint speed, uint angular_speed);
+void move_robot_L298N( std::string direction, uint speed, uint angular_speed);
 
 //Brake Robot
-void brake_robot( std::string direction, uint speed, uint angular_speed);
+void brake_robot_L298N( std::string direction, uint speed, uint angular_speed);
 
 // USB Communication 
 void cdc_task();
@@ -66,3 +66,6 @@ std::vector<std::string>  split_received_data(std::string motion_info);
 void receive_input(char motion_info_[MAX_LINE_LENGTH], int index = 0);
 
 std::string receive_uart_message();
+
+//move Robot
+void move_robot_non_L298N( std::string direction, uint speed, uint angular_speed);

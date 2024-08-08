@@ -72,10 +72,10 @@ int main()
         printf ("angular_speed: %s \n", splitted_data[2].c_str());
         if((previous_speed - speed ) > 0.02){ 
             // Apply brakes
-            brake_robot(direction, previous_speed-speed, previous_angular_speed-angular_speed);
+            brake_robot_L298N(direction, previous_speed-speed, previous_angular_speed-angular_speed);
         }
         else{
-            move_robot(direction, speed, angular_speed);
+            move_robot_L298N(direction, speed, angular_speed);
         }
         previous_speed = speed;
         previous_angular_speed = angular_speed;

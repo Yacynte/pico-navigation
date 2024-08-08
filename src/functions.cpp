@@ -59,8 +59,8 @@ void init_brake_pins() {
     gpio_set_function(ENB_B, GPIO_FUNC_PWM);
 }
 
-void move_robot( std::string direction, uint speed, uint angular_speed){
-    brake_robot("stop", 0, 0);
+void move_robot_L298N( std::string direction, uint speed, uint angular_speed){
+    brake_robot_L298N("stop", 0, 0);
     if (direction.empty()){
         std::cerr<<"No Moving state given";
         exit(0);
@@ -94,8 +94,8 @@ void move_robot( std::string direction, uint speed, uint angular_speed){
     }    
 }
 
-void brake_robot(std::string direction, uint speed, uint angular_speed){
-    move_robot("stop", 0, 0);
+void brake_robot_L298N(std::string direction, uint speed, uint angular_speed){
+    move_robot_L298N("stop", 0, 0);
     if (direction.empty()){
         std::cerr<<"No Moving state given";
         exit(0);
@@ -212,12 +212,7 @@ std::string receive_uart_message(){
 
 std::vector<std::string> split_received_data( std::string motion_info){
     //char motion_info_[MAX_LINE_LENGTH]
-    printf ("our data 1: %s \n", motion_info.c_str());
-    std::string motion_ = "forward 3.14 2.17";
-    // Convert char array to std::string
-    //std::string s(motion_info_);
-    // printf("Type of motion_info_, %s\n",typeid(motion_info_).name());
-    // printf("Type of motion_info_, %s\n",typeid(s).name());
+    //printf ("our data 1: %s \n", motion_info.c_str());
     std::stringstream stream(motion_info);
     //printf ("our data 2: %s \n", s);
     std::vector<std::string> words;
