@@ -22,7 +22,7 @@ void cdc_task() {
         tud_cdc_write(buf, count); // Echo back to the host
         tud_cdc_write_flush();
     }
-}*/
+}
 
 void init_pwm(uint pin) {
     gpio_set_function(pin, GPIO_FUNC_PWM);
@@ -127,6 +127,35 @@ void brake_robot_L298N(std::string direction, uint speed, uint angular_speed){
         slice_num = pwm_gpio_to_slice_num(ENB_B);
         pwm_set_gpio_level(ENB_B, speed_right);
     }    
+}
+*/
+
+void init_motor_pins() {
+    gpio_init(Motor_IN1);
+    gpio_set_dir(Motor_IN1, GPIO_OUT);
+    gpio_init(Motor_IN2);
+    gpio_set_dir(Motor_IN2, GPIO_OUT);
+    gpio_init(Motor_PWM1);
+    gpio_set_dir(Motor_PWM1, GPIO_OUT);
+    gpio_init(Motor_PWM2);
+    gpio_set_dir(Motor_PWM2, GPIO_OUT);
+
+    // Set up PWM
+    pwm_config config = pwm_get_default_config();
+    pwm_config_set_clkdiv(&config, 4.f);  // Adjust clock divider as needed
+    pwm_init(pwm_gpio_to_slice_num(Motor_PWM1), &config, true);
+    pwm_init(pwm_gpio_to_slice_num(Motor_PWM2), &config, true);
+}
+
+void move_robot_non_L298N( std::string direction, uint speed, uint angular_speed){
+    if (direction == "forward"){
+        gpio_put(Motor_IN1, 1);
+        gpio_put(Motor_IN2, 0);
+    }
+    else if (direction == "backward"){
+        gpio_put(Motor_IN1, 0);
+        gpio_put(Motor_IN2, 1);
+    }
 }
 
 void initialize_uart(){

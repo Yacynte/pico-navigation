@@ -26,13 +26,14 @@
 
 const int  MAX_LINE_LENGTH = 256;
 // Motor pins
-#define Left_Motor_IN1 2
-#define Left_Motor_IN2 3
-#define Right_Motor_IN3 4
-#define Right_Motor_IN4 5
-#define ENA_M 16  // PWM pin for motor A
-#define ENB_M 17  // PWM pin for motor B
+// #define Left_Motor_IN1 2
+#define Motor_IN1 2
+#define Motor_IN2 3
+#define Motor_PWM1 4     // PWM pin for motor A
+#define Motor_PWM2 5   // PWM pin for motor B
+// #define ENB_M 17   PWM pin for motor B
 
+/*
 // Brake pins
 #define Left_Brake_IN1 10
 #define Left_Brake_IN2 11
@@ -40,10 +41,9 @@ const int  MAX_LINE_LENGTH = 256;
 #define Right_Brake_IN4 13
 #define ENA_B 14  // PWM pin for motor A
 #define ENB_B 15  // PWM pin for motor B
-
+*/
 
 // Motors initialization
-void init_brake_pins();
 void init_motor_pins();
 
 // PWM initialization
