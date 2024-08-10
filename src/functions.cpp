@@ -147,7 +147,17 @@ void init_motor_pins() {
     pwm_init(pwm_gpio_to_slice_num(Motor_PWM2), &config, true);
 }
 
-void move_robot_non_L298N( std::string direction, uint speed, uint angular_speed){
+void move_robot_non_L298N(std::string motion_info_ ){
+    std::vector<std::string> motion_info = split_received_data(motion_info_);
+    std::vector<uint> current_speeds = get_current_speeds();
+    std::string direction = motion_info[0];
+    // float current_speed = current_speeds[0];
+    // float current_ang_speed = current_speeds[1];
+    // float speed = std::stof(splitted_data[1].c_str());
+    float target_speed = std::stof(motion_info[1]);
+    float target_ang_speed = std::stof(motion_info[2]);
+    float current_speed = std::stof(motion_info[3]);
+    float current__ang_speed = std::stof(motion_info[4]);
     if (direction == "forward"){
         gpio_put(Motor_IN1, 1);
         gpio_put(Motor_IN2, 0);
@@ -156,6 +166,16 @@ void move_robot_non_L298N( std::string direction, uint speed, uint angular_speed
         gpio_put(Motor_IN1, 0);
         gpio_put(Motor_IN2, 1);
     }
+
+    while (current_speed - target_speed > 0.1)
+    {
+        uint speed = std::ceil((current_speed/3.60)*1023);
+        pwm_set_gpio_level(Motor_PWM1, speed);
+        sleep_ms(100);
+
+    }
+    
+
 }
 
 void initialize_uart(){

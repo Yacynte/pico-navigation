@@ -14,8 +14,10 @@ def start_client(host='127.0.0.1', port=4000):
                 float0 = "forward"
                 float1 = 3.14
                 float2 = 2.71
-                float3 = '\n'
-                message = f"{float0} {float1} {float2} {float3}"
+                float3 = 3.14
+                float4 = 2.71
+                float5 = '\n'
+                message = f"{float0} {float1} {float2} {float3} {float4} {float5}"
                 client_socket.sendall(message.encode('utf-8'))
                 print(f"Sent: {message}")
                 

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <cstring>
+#include <cmath>
 #include "pico/stdlib.h"
 #include "hardware/spi.h"
 #include "hardware/i2c.h"
@@ -68,4 +69,6 @@ void receive_input(char motion_info_[MAX_LINE_LENGTH], int index = 0);
 std::string receive_uart_message();
 
 //move Robot
-void move_robot_non_L298N( std::string direction, uint speed, uint angular_speed);
+void move_robot_non_L298N( std::string motion_info);
+
+std::vector<uint> get_current_speeds();
