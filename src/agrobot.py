@@ -24,10 +24,15 @@ def send_data(data):
 try:
     while True:
         # Example: Send two float values
-        float0 = "forward"
-        float1 = 3.14
-        float2 = 2.71
-        data = f"{float0} {float1} {float2}\n"
+        direction = "forward"
+        orientation = "Left"
+        curreent_speed = 3.14
+        curreent_ang_speed = 2.71
+        target_speed = 3.14
+        target_ang_speed = 2.71
+        float = '\n'
+        data = f"{direction} {orientation} {curreent_speed} {curreent_ang_speed} 
+                    {target_speed} {target_ang_speed} {float}"
         send_data(data)
         
         # Wait before sending the next data

@@ -11,169 +11,66 @@
 #include <typeinfo>
 
 
-/*
-// Function to handle incoming data
-void cdc_task() {
-    if (tud_cdc_connected() && tud_cdc_available()) {
-        char buf[64];
-        uint32_t count = tud_cdc_read(buf, sizeof(buf));
-        buf[count] = '\0'; // Null-terminate the received string
-        printf("Received: %s\n", buf);
-        tud_cdc_write(buf, count); // Echo back to the host
-        tud_cdc_write_flush();
-    }
-}
-
-void init_pwm(uint pin) {
-    gpio_set_function(pin, GPIO_FUNC_PWM);
-    uint slice_num = pwm_gpio_to_slice_num(pin);
-    pwm_set_wrap(slice_num, 255); // Set the PWM period to 256 cycles (0-255)
-    pwm_set_enabled(slice_num, true);
-}
 
 void init_motor_pins() {
-    gpio_init(Left_Motor_IN1);
-    gpio_set_dir(Left_Motor_IN1, GPIO_OUT);
-    gpio_init(Left_Motor_IN2);
-    gpio_set_dir(Left_Motor_IN2, GPIO_OUT);
-    gpio_init(Right_Motor_IN3);
-    gpio_set_dir(Right_Motor_IN3, GPIO_OUT);
-    gpio_init(Right_Motor_IN4);
-    gpio_set_dir(Right_Motor_IN4, GPIO_OUT);
-    
-    gpio_set_function(ENA_M, GPIO_FUNC_PWM);
-    gpio_set_function(ENB_M, GPIO_FUNC_PWM);
-}
-
-void init_brake_pins() {
-    gpio_init(Left_Brake_IN1);
-    gpio_set_dir(Left_Brake_IN1, GPIO_OUT);
-    gpio_init(Left_Brake_IN2);
-    gpio_set_dir(Left_Brake_IN2, GPIO_OUT);
-    gpio_init(Right_Brake_IN3);
-    gpio_set_dir(Right_Brake_IN3, GPIO_OUT);
-    gpio_init(Right_Brake_IN4);
-    gpio_set_dir(Right_Brake_IN4, GPIO_OUT);
-    
-    gpio_set_function(ENA_B, GPIO_FUNC_PWM);
-    gpio_set_function(ENB_B, GPIO_FUNC_PWM);
-}
-
-void move_robot_L298N( std::string direction, uint speed, uint angular_speed){
-    brake_robot_L298N("stop", 0, 0);
-    if (direction.empty()){
-        std::cerr<<"No Moving state given";
-        exit(0);
-    }
-    else if (direction == "forward" || direction == "backward"){
-        uint speed_left = speed;
-        uint speed_right = speed + angular_speed;
-        bool forward = true;
-        if (direction == "backward"){ forward = false;}
-        
-        gpio_put(Left_Motor_IN1, forward ? 1 : 0);
-        gpio_put(Left_Motor_IN2, forward ? 0 : 1);
-        gpio_put(Right_Motor_IN3, forward ? 1 : 0);
-        gpio_put(Right_Motor_IN4, forward ? 0 : 1);
-        uint slice_num = pwm_gpio_to_slice_num(ENA_M);
-        pwm_set_gpio_level(ENA_M, speed_left);
-        slice_num = pwm_gpio_to_slice_num(ENB_M);
-        pwm_set_gpio_level(ENB_M, speed_right);
-    }
-    else if (direction == "stop"){
-        uint speed_left = 0;
-        uint speed_right = 0;
-        gpio_put(Left_Motor_IN1, 0);
-        gpio_put(Left_Motor_IN2, 0);
-        gpio_put(Right_Motor_IN3, 0);
-        gpio_put(Right_Motor_IN4, 0);
-        uint slice_num = pwm_gpio_to_slice_num(ENA_M);
-        pwm_set_gpio_level(ENA_M, speed_left);
-        slice_num = pwm_gpio_to_slice_num(ENB_M);
-        pwm_set_gpio_level(ENB_M, speed_right);
-    }    
-}
-
-void brake_robot_L298N(std::string direction, uint speed, uint angular_speed){
-    move_robot_L298N("stop", 0, 0);
-    if (direction.empty()){
-        std::cerr<<"No Moving state given";
-        exit(0);
-    }
-    else if (direction == "forward" || direction == "backward"){
-        uint speed_left = speed;
-        uint speed_right = speed + angular_speed;
-        bool forward = false;
-        if (direction == "backward"){ forward = true;}
-        
-        gpio_put(Left_Brake_IN1, forward ? 1 : 0);
-        gpio_put(Left_Brake_IN2, forward ? 0 : 1);
-        gpio_put(Right_Brake_IN3, forward ? 1 : 0);
-        gpio_put(Right_Brake_IN4, forward ? 0 : 1);
-        uint slice_num = pwm_gpio_to_slice_num(ENA_B);
-        pwm_set_gpio_level(ENA_B, speed_left);
-        slice_num = pwm_gpio_to_slice_num(ENB_B);
-        pwm_set_gpio_level(ENB_B, speed_right);
-    }
-    else if (direction == "stop"){
-        uint speed_left = 0;
-        uint speed_right = 0;
-        gpio_put(Left_Brake_IN1, 0);
-        gpio_put(Left_Brake_IN2, 0);
-        gpio_put(Right_Brake_IN3, 0);
-        gpio_put(Right_Brake_IN4, 0);
-        uint slice_num = pwm_gpio_to_slice_num(ENA_B);
-        pwm_set_gpio_level(ENA_B, speed_left);
-        slice_num = pwm_gpio_to_slice_num(ENB_B);
-        pwm_set_gpio_level(ENB_B, speed_right);
-    }    
-}
-*/
-
-void init_motor_pins() {
-    gpio_init(Motor_IN1);
-    gpio_set_dir(Motor_IN1, GPIO_OUT);
-    gpio_init(Motor_IN2);
-    gpio_set_dir(Motor_IN2, GPIO_OUT);
-    gpio_init(Motor_PWM1);
-    gpio_set_dir(Motor_PWM1, GPIO_OUT);
-    gpio_init(Motor_PWM2);
-    gpio_set_dir(Motor_PWM2, GPIO_OUT);
+    gpio_init(Motor_INLeft);
+    gpio_set_dir(Motor_INLeft, GPIO_OUT);
+    gpio_init(Motor_INRight);
+    gpio_set_dir(Motor_INRight, GPIO_OUT);
+    gpio_init(Motor_PWMLeft);
+    gpio_set_dir(Motor_PWMLeft, GPIO_OUT);
+    gpio_init(Motor_PWMRight);
+    gpio_set_dir(Motor_PWMRight, GPIO_OUT);
 
     // Set up PWM
     pwm_config config = pwm_get_default_config();
     pwm_config_set_clkdiv(&config, 4.f);  // Adjust clock divider as needed
-    pwm_init(pwm_gpio_to_slice_num(Motor_PWM1), &config, true);
-    pwm_init(pwm_gpio_to_slice_num(Motor_PWM2), &config, true);
+    pwm_init(pwm_gpio_to_slice_num(Motor_PWMLeft), &config, true);
+    pwm_init(pwm_gpio_to_slice_num(Motor_PWMRight), &config, true);
 }
 
 void move_robot_non_L298N(std::string motion_info_ ){
     std::vector<std::string> motion_info = split_received_data(motion_info_);
-    std::vector<uint> current_speeds = get_current_speeds();
+    //std::vector<uint> current_speeds = get_current_speeds();
     std::string direction = motion_info[0];
-    // float current_speed = current_speeds[0];
-    // float current_ang_speed = current_speeds[1];
-    // float speed = std::stof(splitted_data[1].c_str());
-    float target_speed = std::stof(motion_info[1]);
-    float target_ang_speed = std::stof(motion_info[2]);
-    float current_speed = std::stof(motion_info[3]);
-    float current__ang_speed = std::stof(motion_info[4]);
+    std::string orientation = motion_info[1];
+    float target_speed = std::stof(motion_info[2]);
+    float target_ang_speed = std::stof(motion_info[3]);
+    float current_speed = std::stof(motion_info[4]);
+    float current_ang_speed = std::stof(motion_info[5]);
     if (direction == "forward"){
-        gpio_put(Motor_IN1, 1);
-        gpio_put(Motor_IN2, 0);
+        gpio_put(Motor_INLeft, 1);
+        gpio_put(Motor_INRight, 0);
     }
     else if (direction == "backward"){
-        gpio_put(Motor_IN1, 0);
-        gpio_put(Motor_IN2, 1);
+        gpio_put(Motor_INLeft, 0);
+        gpio_put(Motor_INRight, 1);
     }
 
-    while (current_speed - target_speed > 0.1)
-    {
-        uint speed = std::ceil((current_speed/3.60)*1023);
-        pwm_set_gpio_level(Motor_PWM1, speed);
-        sleep_ms(100);
-
-    }
+    if(orientation == "Left"){
+        uint speedLeft = std::ceil((target_speed/max_speed)*1023);
+        uint targetspeedRight = radius * (target_ang_speed * M_PI / 180.0) * 3.6; // Km/h
+        if(targetspeedRight > max_speed){ targetspeedRight = max_speed;}
+        uint speedRight = std::ceil((targetspeedRight/max_speed)*1023);
+        pwm_set_gpio_level(Motor_PWMLeft, speedLeft);
+        pwm_set_gpio_level(Motor_PWMRight, speedRight);
+        sleep_ms(10);
+        }
+    if(orientation == "Right"){
+        uint speedRight = std::ceil((target_speed/max_speed)*1023);
+        uint targetspeedLeft = radius * (target_ang_speed * M_PI / 180.0) * 3.6; // Km/h
+        if(targetspeedLeft > max_speed){ targetspeedLeft = max_speed;}
+        uint speedLeft = std::ceil((targetspeedLeft/max_speed)*1023);
+        pwm_set_gpio_level(Motor_PWMLeft, speedLeft);
+        pwm_set_gpio_level(Motor_PWMRight, speedRight);
+        sleep_ms(10);
+        }
+    if(orientation == "Straight"){
+        uint speed = std::ceil((target_speed/max_speed)*1023);
+        pwm_set_gpio_level(Motor_PWMLeft, speed);
+        pwm_set_gpio_level(Motor_PWMRight, speed);
+        sleep_ms(10);
+        }
     
 
 }
