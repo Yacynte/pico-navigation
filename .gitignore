@@ -2,4 +2,5 @@
 build/
 build_pico/
 pico-sdk-blink/
-CMakeLists_pico.txt
+CMakeLists_pico.txt/
+.venv/
