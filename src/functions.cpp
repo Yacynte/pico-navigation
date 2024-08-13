@@ -1,8 +1,7 @@
 #include <stdio.h>
 
-#include "pico/stdlib.h"
-#include "hardware/pwm.h"
-//#include "pico/cyw43_arch.h"
+// #include "pico/stdlib.h"
+// #include "pico/cyw43_arch.h"
 #include "functions.h"
 //#include "tusb.h"
 #include <cstdio>
@@ -13,6 +12,10 @@
 
 
 void init_motor_pins() {
+
+    adc_init();  // Initialize ADC
+    adc_gpio_init(Brake_FEEDBACK_PIN);
+
     gpio_init(Motor_INLeft);
     gpio_set_dir(Motor_INLeft, GPIO_OUT);
     gpio_init(Motor_INRight);
@@ -21,12 +24,19 @@ void init_motor_pins() {
     gpio_set_dir(Motor_PWMLeft, GPIO_OUT);
     gpio_init(Motor_PWMRight);
     gpio_set_dir(Motor_PWMRight, GPIO_OUT);
+    gpio_init(Motor_BrakeLeft);
+    gpio_set_dir(Motor_BrakeLeft, GPIO_OUT);
+    gpio_init(Motor_BrakeRight);
+    gpio_set_dir(Motor_BrakeRight, GPIO_OUT);
+
 
     // Set up PWM
     pwm_config config = pwm_get_default_config();
     pwm_config_set_clkdiv(&config, 4.f);  // Adjust clock divider as needed
     pwm_init(pwm_gpio_to_slice_num(Motor_PWMLeft), &config, true);
     pwm_init(pwm_gpio_to_slice_num(Motor_PWMRight), &config, true);
+    pwm_init(pwm_gpio_to_slice_num(Motor_PWMBrake), &config, true);
+   
 }
 
 void move_robot_non_L298N(std::string motion_info_ ){
@@ -41,10 +51,20 @@ void move_robot_non_L298N(std::string motion_info_ ){
     if (direction == "forward"){
         gpio_put(Motor_INLeft, 1);
         gpio_put(Motor_INRight, 0);
+        gpio_put(Motor_BrakeLeft, 0);
+        gpio_put(Motor_BrakeRight, 0);
     }
-    else if (direction == "backward"){
+    if (direction == "backward"){
         gpio_put(Motor_INLeft, 0);
         gpio_put(Motor_INRight, 1);
+        gpio_put(Motor_BrakeLeft, 0);
+        gpio_put(Motor_BrakeRight, 0);
+    }
+    if (direction == "stop"){
+        gpio_put(Motor_INLeft, 0);
+        gpio_put(Motor_INRight, 0);
+        gpio_put(Motor_BrakeLeft, 1);
+        gpio_put(Motor_BrakeRight, 0);
     }
 
     if(orientation == "Left"){
@@ -66,11 +86,33 @@ void move_robot_non_L298N(std::string motion_info_ ){
         sleep_ms(10);
         }
     if(orientation == "Straight"){
-        uint speed = std::ceil((target_speed/max_speed)*1023);
-        pwm_set_gpio_level(Motor_PWMLeft, speed);
-        pwm_set_gpio_level(Motor_PWMRight, speed);
-        sleep_ms(10);
+        if (target_speed >= current_speed){
+            uint speed = std::ceil((target_speed/max_speed)*1023);
+            pwm_set_gpio_level(Motor_PWMLeft, speed);
+            pwm_set_gpio_level(Motor_PWMRight, speed);
+            sleep_ms(10);
         }
+        else {
+            uint speed_actuator = 0.02; // cm/s
+            /*
+            m*delta_v = F*dt (change in momentum equals impulse)
+            delta_v = current_speed - target_speed
+            m*delta_v = rho*g*l*A_contact*dt
+            l = m*delta_v/(rho*g*A_conntact*dt)
+            */
+            uint target_length = mass * (current_speed - target_speed) / (rho * g * A_brakePad * time_to_brake);
+            // set speed is 50% max speed
+            float time_to_reach_length = target_length / (2*actuator_speed); // time to reach target length 
+            uint t_to_reach_length = std::ceil((time_to_reach_length+time_to_brake)*1000);
+            //uint16_t target_legth = 512; // Target position (based on feedback sensor)
+            adc_select_input(0);  // Select ADC input (connected to FEEDBACK_PIN)
+            uint16_t current_length = adc_read();  // Read the feedback value
+            uint speed = 512;
+            pwm_set_gpio_level(Motor_PWMBrake, speed);
+            sleep_ms((t_to_reach_length));
+            pwm_set_gpio_level(Motor_PWMBrake, 0);
+        }
+    }
     
 
 }

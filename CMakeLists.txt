@@ -63,6 +63,7 @@ target_link_libraries(agrobot
         pico_stdlib
         hardware_i2c
         hardware_spi
+        hardware_adc
         #pico_cyw43_arch_none
         #pico_cyw43_arch_lwip_threadsafe_background
         #pico_cyw43_arch_lwip_poll

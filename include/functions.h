@@ -11,7 +11,8 @@
 #include "hardware/vreg.h"
 #include "hardware/clocks.h"
 #include <cctype> 
-
+#include "hardware/adc.h"
+#include "hardware/pwm.h"
 
 // UART configuration
 #define UART_ID uart0
@@ -30,12 +31,22 @@
 #define Motor_INRight 3
 #define Motor_PWMLeft 4     // PWM pin for motor Left
 #define Motor_PWMRight 5   // PWM pin for motor Right
+#define Motor_BrakeLeft 6
+#define Motor_BrakeRight 7
+#define Motor_PWMBrake 8
+#define Brake_FEEDBACK_PIN 9  // Potentiometer or encoder
 
 const int  MAX_LINE_LENGTH = 256;
 const float radius = 0.2;  // m
 const float speed_diff = 0.1; // Km/h
 const float ang_speed_diff = 1; // deg/s
 const float max_speed = 3.6; // Km/h
+const float mass = 125; // kg
+const float rho = 1062; // kg/m3
+const float g = 9.81; // m/s2
+const float A_brakePad = 0.005; // m2 adjustable
+const float actuator_speed = 0.06; // m/s adjustable
+const float time_to_brake = 2; // s, time to brake
 
 // Motors initialization
 void init_motor_pins();
