@@ -39,6 +39,17 @@ void init_motor_pins() {
    
 }
 
+void brake(){
+    gpio_put(Motor_INLeft, 0);
+    gpio_put(Motor_INRight, 0);
+    gpio_put(Motor_BrakeLeft, 1);
+    gpio_put(Motor_BrakeRight, 0);
+    uint speed = 512;
+    // std::ceil((target_speed/max_speed)*1023);
+    pwm_set_gpio_level(Motor_PWMLeft, speed);
+    pwm_set_gpio_level(Motor_PWMRight, speed);
+}
+
 void move_robot_non_L298N(std::string motion_info_ ){
     std::vector<std::string> motion_info = split_received_data(motion_info_);
     //std::vector<uint> current_speeds = get_current_speeds();
@@ -48,23 +59,22 @@ void move_robot_non_L298N(std::string motion_info_ ){
     float target_ang_speed = std::stof(motion_info[3]);
     float current_speed = std::stof(motion_info[4]);
     float current_ang_speed = std::stof(motion_info[5]);
+    gpio_put(Motor_BrakeLeft, 0);
+    gpio_put(Motor_BrakeRight, 0);
+    
     if (direction == "forward"){
         gpio_put(Motor_INLeft, 1);
         gpio_put(Motor_INRight, 0);
-        gpio_put(Motor_BrakeLeft, 0);
-        gpio_put(Motor_BrakeRight, 0);
     }
     if (direction == "backward"){
         gpio_put(Motor_INLeft, 0);
         gpio_put(Motor_INRight, 1);
-        gpio_put(Motor_BrakeLeft, 0);
-        gpio_put(Motor_BrakeRight, 0);
+        // gpio_put(Motor_BrakeLeft, 0);
+        // gpio_put(Motor_BrakeRight, 0);
     }
     if (direction == "stop"){
-        gpio_put(Motor_INLeft, 0);
-        gpio_put(Motor_INRight, 0);
-        gpio_put(Motor_BrakeLeft, 1);
-        gpio_put(Motor_BrakeRight, 0);
+        brake();
+        sleep_ms(1000);
     }
 
     if(orientation == "Left"){
@@ -93,13 +103,14 @@ void move_robot_non_L298N(std::string motion_info_ ){
             sleep_ms(10);
         }
         else {
-            uint speed_actuator = 0.02; // cm/s
+            brake();
             /*
+            uint speed_actuator = 0.02; // cm/s
             m*delta_v = F*dt (change in momentum equals impulse)
             delta_v = current_speed - target_speed
             m*delta_v = rho*g*l*A_contact*dt
             l = m*delta_v/(rho*g*A_conntact*dt)
-            */
+            
             uint target_length = mass * (current_speed - target_speed) / (rho * g * A_brakePad * time_to_brake);
             // set speed is 50% max speed
             float time_to_reach_length = target_length / (2*actuator_speed); // time to reach target length 
@@ -111,6 +122,7 @@ void move_robot_non_L298N(std::string motion_info_ ){
             pwm_set_gpio_level(Motor_PWMBrake, speed);
             sleep_ms((t_to_reach_length));
             pwm_set_gpio_level(Motor_PWMBrake, 0);
+            */
         }
     }
     

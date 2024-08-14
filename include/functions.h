@@ -63,4 +63,7 @@ std::string receive_uart_message();
 //move Robot
 void move_robot_non_L298N( std::string motion_info);
 
+//brake robot
+void brake();
+
 //std::vector<uint> get_current_speeds();
